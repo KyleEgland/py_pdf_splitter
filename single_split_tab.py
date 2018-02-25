@@ -12,12 +12,10 @@ import func_pdf_split
 class SingleSplitTab(tk.Frame):
     # Initialization function
     def __init__(self, parent):
+        # Instantiate the frame for the tab
         tk.Frame.__init__(self, parent)
-        # The "rowconfigure" and "columnconfigure" tell the program
-        # how to resize widgets when the window is resized
-        # Weight affects how the item will be scaled in relation
-        # to the other elements that are bing re-sized
-        # E.g. a row with weight 1 will scale more than a row with weight 2
+
+        # Setup rows and columns for the tab
         tk.Grid.rowconfigure(self, 0, weight=1)
         tk.Grid.rowconfigure(self, 1, weight=1)
         tk.Grid.rowconfigure(self, 2, weight=1)
@@ -33,6 +31,15 @@ class SingleSplitTab(tk.Frame):
         tk.Grid.columnconfigure(self, 6, weight=1)
         tk.Grid.columnconfigure(self, 7, weight=1)
         tk.Grid.columnconfigure(self, 8, weight=1)
+
+        #############
+        # Variables #
+        #############
+        # Setting up the variables for the operations
+        self.inputFile = ''
+        self.outputDir = ''
+        self.outputFile = ''
+        self.defaultDir = '%userprofile%'
 
         #######################
         # Row 0 - INPUT LABEL #
@@ -126,3 +133,16 @@ class SingleSplitTab(tk.Frame):
         self.quit_btn = ttk.Button(self, text='Quit')
         # Quit button placement
         self.quit_btn.grid(row=8, column=2, sticky='ew', padx=5, pady=5)
+
+        # Get the PDF that is to be split
+        def openFile(self):
+            pass
+
+        # Get the directory into which the new file will go
+        def getDir(self):
+            pass
+
+        # Check the input on the file name field to ensure there are no invalid
+        # characters
+        def sanitizeFileName(self):
+            pass
