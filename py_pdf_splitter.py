@@ -17,7 +17,7 @@ class MyApp(tk.Tk):
         # Give the window an icon (must be in dir desginated)
         # tk.Tk.iconbitmap(self, default='icons/example_icon.ico')
         # Give the window a title (displayed in title bar; top of window)
-        tk.Tk.wm_title(self, 'Example GUI')
+        tk.Tk.wm_title(self, 'Py PDF Splitter')
 
         # Create the Notebook widget that will comprise the main part
         # of the application
