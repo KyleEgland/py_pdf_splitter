@@ -6,9 +6,32 @@
 # ttk = tkinter styling module, more GUI stuff
 import tkinter as tk
 import tkinter.ttk as ttk
+import logging
+# Local file imports
 from single_split_tab import SingleSplitTab
 from alternatetab import AlternateTab
 from thirdtab import OtherTab
+
+##########
+# Logger #
+##########
+# Setting up a separate logger to avoid using "root" logger
+logger = logging.getLogger(__name__)
+# Log level set
+logger.setLevel(logging.DEBUG)
+
+# Establishing log line format
+formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+
+# Establishing log file/directory
+file_handler = logging.FileHandler('logs/main.log')
+# Adding formatter to file handler
+file_handler.setFormatter(formatter)
+# Separately setting log level for the file handler - just because
+file_handler.setLevel(logging.DEBUG)
+
+# Add the file handler to the logger
+logger.addHandler(file_handler)
 
 
 class MyApp(tk.Tk):

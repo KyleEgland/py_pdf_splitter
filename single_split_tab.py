@@ -4,9 +4,40 @@
 # then allow for the split contents to be put into a single output PDF.
 # tkinter = GUI module, used to construt the GUI
 # ttk = tkinter styling, more GUI stuff
+# filedialog = allows for opening files/directories
+# logging = allow for logging
+# os = file path stuff
+# sys = system stuff (I.e. exiting)
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import filedialog as fd
+import logging
+import os
+import sys
+# Local file imports
 import func_pdf_split
+
+
+##########
+# Logger #
+##########
+# Setting up a separate logger to avoid using "root" logger
+logger = logging.getLogger(__name__)
+# Log level set
+logger.setLevel(logging.DEBUG)
+
+# Establishing log line format
+formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+
+# Establishing log file/directory
+file_handler = logging.FileHandler('logs/main.log')
+# Adding formatter to file handler
+file_handler.setFormatter(formatter)
+# Separately setting log level for the file handler - just because
+file_handler.setLevel(logging.DEBUG)
+
+# Add the file handler to the logger
+logger.addHandler(file_handler)
 
 
 class SingleSplitTab(tk.Frame):
@@ -37,9 +68,10 @@ class SingleSplitTab(tk.Frame):
         #############
         # Setting up the variables for the operations
         self.inputFile = ''
+        self.fileName = ''
         self.outputDir = ''
         self.outputFile = ''
-        self.defaultDir = '%userprofile%'
+        self.defaultDir = str(os.path.expanduser('~'))
 
         #######################
         # Row 0 - INPUT LABEL #
@@ -60,7 +92,8 @@ class SingleSplitTab(tk.Frame):
         self.input_file_entry.grid(row=1, column=0, columnspan=3, sticky='ew')
 
         # Input file selection button
-        self.input_file_btn = ttk.Button(self, text='Select File')
+        self.input_file_btn = ttk.Button(self, text='Select File',
+                                         command=lambda: self.openFile())
         # Input file selection button placement
         self.input_file_btn.grid(row=1, column=3, sticky='ew', padx=5, pady=5)
 
@@ -82,7 +115,8 @@ class SingleSplitTab(tk.Frame):
         self.out_dir_entry.grid(row=3, column=0, columnspan=3, sticky='ew')
 
         # Output directory selection button
-        self.out_btn = ttk.Button(self, text='Select Directory')
+        self.out_btn = ttk.Button(self, text='Select Directory',
+                                  command=lambda: self.getDir())
         # Output directory selection button placement
         self.out_btn.grid(row=3, column=3, sticky='ew', padx=5, pady=5)
 
@@ -130,19 +164,46 @@ class SingleSplitTab(tk.Frame):
         # Process button placement
         self.process_btn.grid(row=8, column=1, sticky='ew', padx=5, pady=5)
         # Quit button
-        self.quit_btn = ttk.Button(self, text='Quit')
+        self.quit_btn = ttk.Button(self, text='Quit',
+                                   command=lambda: self.quit())
         # Quit button placement
         self.quit_btn.grid(row=8, column=2, sticky='ew', padx=5, pady=5)
 
-        # Get the PDF that is to be split
-        def openFile(self):
-            pass
+    #############
+    # Functions #
+    #############
+    # Get the PDF to be split
+    def openFile(self):
+        # Open file dialog to get user specified PDF file
+        self.inputFile = fd.askopenfilename(initialdir=self.defaultDir,
+                                            title="Select file",
+                                            filetypes=(("PDF files",
+                                                        "*.pdf"),
+                                                       ("all files",
+                                                        "*.*")))
+        # Split the selected file into path and file to allow program to store
+        # the directory the file was selected from as the default
+        self.defaultDir, self.fileName = os.path.split(self.inputFile)
+        # Delete any contents that may be in the entry widget
+        self.input_file_entry.delete(0, tk.END)
+        # Insert the contents of the inputFile variable into the entry widget
+        self.input_file_entry.insert(0, self.inputFile)
 
-        # Get the directory into which the new file will go
-        def getDir(self):
-            pass
+    # Get the directory into which the new file will go
+    def getDir(self):
+        # Open directory selection dialog
+        self.outputDir = fd.askdirectory(initialdir=self.defaultDir,
+                                         title="Select Save Directory")
+        # Delete any contents that may be in the entry widget
+        self.out_dir_entry.delete(0, tk.END)
+        # Insert the contents of the outputDir variable into the entry widget
+        self.out_dir_entry.insert(0, self.outputDir)
 
-        # Check the input on the file name field to ensure there are no invalid
-        # characters
-        def sanitizeFileName(self):
-            pass
+    # Check the input on the file name field to ensure there are no invalid
+    # characters
+    def sanitizeFileName(self):
+        pass
+
+    # Quit button...it quits the program
+    def quit(self):
+        sys.exit()
