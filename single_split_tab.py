@@ -199,9 +199,8 @@ class SingleSplitTab(tk.Frame):
         # Insert the contents of the outputDir variable into the entry widget
         self.out_dir_entry.insert(0, self.outputDir)
 
-    # Check the input on the file name field to ensure there are no invalid
-    # characters
-    def sanitizeFileName(self):
+    # Check all fields to ensure that the values are legitimate
+    def sanitizeInputs(self):
         pass
 
     # Quit button...it quits the program
