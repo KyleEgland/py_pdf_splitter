@@ -201,7 +201,17 @@ class SingleSplitTab(tk.Frame):
 
     # Check all fields to ensure that the values are legitimate
     def sanitizeInputs(self):
-        pass
+        # Check the entry widget contents for input file
+        if os.path.isfile(self.input_file_entry.get()):
+            pass
+        else:
+            return
+
+        # Check the entry widget contents for output directory
+        if os.path.isdir(self.out_dir_entry.get()):
+            pass
+        else:
+            return
 
     # Quit button...it quits the program
     def quit(self):
