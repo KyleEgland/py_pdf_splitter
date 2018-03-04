@@ -8,12 +8,14 @@
 # logging = allow for logging
 # os = file path stuff
 # sys = system stuff (I.e. exiting)
+# re = for regular expressions
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog as fd
 import logging
 import os
 import sys
+import re
 # Local file imports
 import func_pdf_split
 
@@ -30,7 +32,7 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
 
 # Establishing log file/directory
-file_handler = logging.FileHandler('logs/main.log')
+file_handler = logging.FileHandler('logs/split_tab.log')
 # Adding formatter to file handler
 file_handler.setFormatter(formatter)
 # Separately setting log level for the file handler - just because
@@ -72,6 +74,10 @@ class SingleSplitTab(tk.Frame):
         self.outputDir = ''
         self.outputFile = ''
         self.defaultDir = str(os.path.expanduser('~'))
+        self.pageRange = ''
+        # Defining allowed characters for input sanitization
+        self.notAllowedFileName = re.compile(r'[\|\*\?\\"/:<>]')
+        self.pageChars = set("0123456789-,")
 
         #######################
         # Row 0 - INPUT LABEL #
@@ -209,6 +215,24 @@ class SingleSplitTab(tk.Frame):
 
         # Check the entry widget contents for output directory
         if os.path.isdir(self.out_dir_entry.get()):
+            pass
+        else:
+            return
+
+        # Check the entry widget contents for file name
+        if self.notAllowedFileName.search(self.outfile_name_entry.get()) is \
+                None:
+            pass
+        else:
+            return
+
+        # Check the entry widget contents for page range
+        self.pageRange = (self.page_rng_entry.get()).replace(' ', '')
+        # Delete any contents that may be in the entry widget
+        self.page_rng_entry.delete(0, tk.END)
+        # Insert the contents of the outputDir variable into the entry widget
+        self.page_rng_entry.insert(0, self.outputDir)
+        if self.pageChars.issuperset(self.page_rng_entry.get()):
             pass
         else:
             return
