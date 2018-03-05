@@ -18,6 +18,7 @@ import sys
 import re
 # Local file imports
 import func_pdf_split
+import popuphandler as puh
 
 
 ##########
@@ -166,7 +167,8 @@ class SingleSplitTab(tk.Frame):
         # Row 8 - PROCESS BUTTONS #
         ###########################
         # Process button
-        self.process_btn = ttk.Button(self, text='Process')
+        self.process_btn = ttk.Button(self, text='Process',
+                                      command=lambda: self.sanitizeInputs())
         # Process button placement
         self.process_btn.grid(row=8, column=1, sticky='ew', padx=5, pady=5)
         # Quit button
@@ -211,19 +213,22 @@ class SingleSplitTab(tk.Frame):
         if os.path.isfile(self.input_file_entry.get()):
             pass
         else:
+            puh.mbox(msg='The input file is invalid')
             return
 
         # Check the entry widget contents for output directory
         if os.path.isdir(self.out_dir_entry.get()):
             pass
         else:
+            puh.mbox(msg='The output path does not exist')
             return
 
         # Check the entry widget contents for file name
         if self.notAllowedFileName.search(self.outfile_name_entry.get()) is \
-                None:
+                None and self.outfile_name_entry.get() is not '':
             pass
         else:
+            puh.mbox(msg='The file name specified is invalid')
             return
 
         # Check the entry widget contents for page range
@@ -231,10 +236,11 @@ class SingleSplitTab(tk.Frame):
         # Delete any contents that may be in the entry widget
         self.page_rng_entry.delete(0, tk.END)
         # Insert the contents of the outputDir variable into the entry widget
-        self.page_rng_entry.insert(0, self.outputDir)
+        self.page_rng_entry.insert(0, self.pageRange)
         if self.pageChars.issuperset(self.page_rng_entry.get()):
             pass
         else:
+            puh.mbox(msg='The page range specified is invalid')
             return
 
     # Quit button...it quits the program
