@@ -168,7 +168,7 @@ class SingleSplitTab(tk.Frame):
         ###########################
         # Process button
         self.process_btn = ttk.Button(self, text='Process',
-                                      command=lambda: self.sanitizeInputs())
+                                      command=lambda: self.splitFile())
         # Process button placement
         self.process_btn.grid(row=8, column=1, sticky='ew', padx=5, pady=5)
         # Quit button
@@ -205,7 +205,7 @@ class SingleSplitTab(tk.Frame):
         # Delete any contents that may be in the entry widget
         self.out_dir_entry.delete(0, tk.END)
         # Insert the contents of the outputDir variable into the entry widget
-        self.out_dir_entry.insert(0, self.outputDir)
+        self.out_dir_entry.insert(0, self.outputDir + '\\')
 
     # Check all fields to ensure that the values are legitimate
     def sanitizeInputs(self):
@@ -249,7 +249,19 @@ class SingleSplitTab(tk.Frame):
             return
 
     def splitFile(self):
-        fileSplitter = splt.PdfMod()
+        check = self.sanitizeInputs()
+        if check is None:
+            split = splt.PdfMod()
+
+            split.addInput(self.inputFile)
+            split.addPageRange(self.pageRange)
+            split.addOutDir(self.outputDir)
+            split.addOutput(self.outputFile)
+
+            split.pdfSplit()
+            puh.mbox(msg='Operation completed', win_title='Success')
+        else:
+            return
 
     # Quit button...it quits the program
     def quit(self):

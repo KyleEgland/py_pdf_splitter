@@ -5,13 +5,13 @@ from PyPDF2 import PdfFileReader
 
 class PdfMod():
 
-    def __init__(self):
+    def __init__(self, inFile='', outFile='', outDir='', pageRng=''):
         # Start by taking an input file, specifying output file, and page range
-        self.inFile = ""
-        self.outFile = ""
-        self.outDir = ""
+        self.inFile = inFile
+        self.outFile = outFile
+        self.outDir = outDir
 
-        self.pageRange = ""
+        self.pageRange = pageRng
 
         # Instantiate the PdfFileWriter
         self.output = PdfFileWriter()
