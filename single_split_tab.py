@@ -17,7 +17,7 @@ import os
 import sys
 import re
 # Local file imports
-import func_pdf_split
+import func_pdf_split as splt
 import popuphandler as puh
 
 
@@ -210,25 +210,29 @@ class SingleSplitTab(tk.Frame):
     # Check all fields to ensure that the values are legitimate
     def sanitizeInputs(self):
         # Check the entry widget contents for input file
-        if os.path.isfile(self.input_file_entry.get()):
+        self.inputFile = self.input_file_entry.get()
+        if os.path.isfile(self.inputFile):
             pass
         else:
-            puh.mbox(msg='The input file is invalid')
+            puh.mbox(msg='The input file is invalid', win_title='ERROR')
             return
 
         # Check the entry widget contents for output directory
-        if os.path.isdir(self.out_dir_entry.get()):
+        self.outputDir = self.out_dir_entry.get()
+        if os.path.isdir(self.outputDir):
             pass
         else:
-            puh.mbox(msg='The output path does not exist')
+            puh.mbox(msg='The output path does not exist', win_title='ERROR')
             return
 
         # Check the entry widget contents for file name
-        if self.notAllowedFileName.search(self.outfile_name_entry.get()) is \
+        self.outputFile = self.outfile_name_entry.get()
+        if self.notAllowedFileName.search(self.outputFile) is \
                 None and self.outfile_name_entry.get() is not '':
             pass
         else:
-            puh.mbox(msg='The file name specified is invalid')
+            puh.mbox(msg='The file name specified is invalid',
+                     win_title='ERROR')
             return
 
         # Check the entry widget contents for page range
@@ -240,8 +244,12 @@ class SingleSplitTab(tk.Frame):
         if self.pageChars.issuperset(self.page_rng_entry.get()):
             pass
         else:
-            puh.mbox(msg='The page range specified is invalid')
+            puh.mbox(msg='The page range specified is invalid',
+                     win_title='ERROR')
             return
+
+    def splitFile(self):
+        fileSplitter = splt.PdfMod()
 
     # Quit button...it quits the program
     def quit(self):
