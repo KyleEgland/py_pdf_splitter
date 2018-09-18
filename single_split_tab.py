@@ -24,6 +24,16 @@ import popuphandler as puh
 ##########
 # Logger #
 ##########
+# Check for the existence of a 'logs' folder - should one not exist, create it
+if os.path.exists('./logs/'):
+    pass
+else:
+    try:
+        os.mkdir('./logs/')
+    except Exception as e:
+        print('[-] Unable to create directory - please check permissions')
+        sys.exit()
+
 # Setting up a separate logger to avoid using "root" logger
 logger = logging.getLogger(__name__)
 # Log level set
