@@ -238,7 +238,7 @@ class SingleSplitTab(tk.Frame):
         # Check the entry widget contents for file name
         self.outputFile = self.outfile_name_entry.get()
         if self.notAllowedFileName.search(self.outputFile) is \
-                None and self.outfile_name_entry.get() is not '':
+                None and self.outfile_name_entry.get() != '':
             pass
         else:
             puh.mbox(msg='The file name specified is invalid',
