@@ -1,12 +1,18 @@
 ---
 layout: default
-title: Tkinter GUI Example
+title: Python PDF Splitter
 ---
 
-# Tkinter GUI Example Application
+# PDF Splitter Application
 
-A Python application written with the tkinter library to provide a GUI to this example project.
+A PDF manipulation program written with Python and GUI provided via tkinter.
 
 ## Synopsis
 
-This is an "evergreen" learning project meant to demonstrate both Python and the tkinter GUI library.
+This is an "evergreen" learning project meant to demonstrate knowledge and understanding of Python.
+
+## To Do
+
+- Refactor and re-structure into a package (creating a Windows distribution of the application)
+- Create a build pipeline using GitHub Actions
+- Add thumbnail previews
