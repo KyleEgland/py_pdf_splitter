@@ -1,61 +1,23 @@
 #! python3
 #
-# This tab will allow user to add a single PDF, specify how it should be split
-# then allow for the split contents to be put into a single output PDF.
-# tkinter = GUI module, used to construt the GUI
-# ttk = tkinter styling, more GUI stuff
-# filedialog = allows for opening files/directories
-# logging = allow for logging
-# os = file path stuff
-# sys = system stuff (I.e. exiting)
-# re = for regular expressions
-import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter import filedialog as fd
+# py_pdf_manipulator_frame.py
+import src.func_pdf_split as splt
 import logging
 import os
-import sys
 import re
-# Local file imports
-import func_pdf_split as splt
-import popuphandler as puh
+import sys
+from tkinter import filedialog as fd
+from tkinter import messagebox as mb
+import tkinter as tk
+import tkinter.ttk as ttk
 
 
-##########
-# Logger #
-##########
-# Check for the existence of a 'logs' folder - should one not exist, create it
-if os.path.exists('./logs/'):
-    pass
-else:
-    try:
-        os.mkdir('./logs/')
-    except Exception as e:
-        print('[-] Unable to create directory - please check permissions')
-        sys.exit()
-
-# Setting up a separate logger to avoid using "root" logger
-logger = logging.getLogger(__name__)
-# Log level set
-logger.setLevel(logging.DEBUG)
-
-# Establishing log line format
-formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
-
-# Establishing log file/directory
-file_handler = logging.FileHandler('logs/split_tab.log')
-# Adding formatter to file handler
-file_handler.setFormatter(formatter)
-# Separately setting log level for the file handler - just because
-file_handler.setLevel(logging.DEBUG)
-
-# Add the file handler to the logger
-logger.addHandler(file_handler)
-
-
-class SingleSplitTab(tk.Frame):
+class ManipulatorFrame(tk.Frame):
     # Initialization function
     def __init__(self, parent):
+        # Instantiate logger
+        self.logger = logging.getLogger("PyPdfManipulator.ManipulatorFrame")
+        self.logger.debug("__init__ started...")
         # Instantiate the frame for the tab
         tk.Frame.__init__(self, parent)
 
@@ -97,8 +59,9 @@ class SingleSplitTab(tk.Frame):
         # Input file label
         self.input_file_lbl = tk.Label(self, text='Select Source PDF File')
         # Input file label placement
-        self.input_file_lbl.grid(row=0, column=0, columnspan=4, sticky='snw',
-                                 padx=2, pady=2)
+        self.input_file_lbl.grid(
+            row=0, column=0, columnspan=4, sticky='snw', padx=2, pady=2
+        )
 
         #########################
         # Row 1 - INPUT WIDGETS #
@@ -109,8 +72,9 @@ class SingleSplitTab(tk.Frame):
         self.input_file_entry.grid(row=1, column=0, columnspan=3, sticky='ew')
 
         # Input file selection button
-        self.input_file_btn = ttk.Button(self, text='Select File',
-                                         command=lambda: self.openFile())
+        self.input_file_btn = ttk.Button(
+            self, text='Select File', command=lambda: self.openFile()
+        )
         # Input file selection button placement
         self.input_file_btn.grid(row=1, column=3, sticky='ew', padx=5, pady=5)
 
@@ -120,8 +84,9 @@ class SingleSplitTab(tk.Frame):
         # Output directory label
         self.out_dir_lbl = ttk.Label(self, text='Output Directory')
         # Output directory label placement
-        self.out_dir_lbl.grid(row=2, column=0, columnspan=4, sticky='snw',
-                              padx=2, pady=2)
+        self.out_dir_lbl.grid(
+            row=2, column=0, columnspan=4, sticky='snw', padx=2, pady=2
+        )
 
         ##########################
         # Row 3 - OUTPUT WIDGETS #
@@ -132,8 +97,9 @@ class SingleSplitTab(tk.Frame):
         self.out_dir_entry.grid(row=3, column=0, columnspan=3, sticky='ew')
 
         # Output directory selection button
-        self.out_btn = ttk.Button(self, text='Select Directory',
-                                  command=lambda: self.getDir())
+        self.out_btn = ttk.Button(
+            self, text='Select Directory', command=lambda: self.getDir()
+        )
         # Output directory selection button placement
         self.out_btn.grid(row=3, column=3, sticky='ew', padx=5, pady=5)
 
@@ -143,8 +109,9 @@ class SingleSplitTab(tk.Frame):
         # Output file name label
         self.outfile_name_lbl = ttk.Label(self, text='Output File Name')
         # Output file name label placement
-        self.outfile_name_lbl.grid(row=4, column=0, columnspan=4, sticky='snw',
-                                   padx=2, pady=2)
+        self.outfile_name_lbl.grid(
+            row=4, column=0, columnspan=4, sticky='snw', padx=2, pady=2
+        )
 
         ##############################
         # Row 5 - OUTPUT FILE WIDGET #
@@ -152,18 +119,21 @@ class SingleSplitTab(tk.Frame):
         # Output file entry field
         self.outfile_name_entry = tk.Entry(self)
         # Output file entry feild placement
-        self.outfile_name_entry.grid(row=5, column=0, columnspan=4,
-                                     sticky='ew')
+        self.outfile_name_entry.grid(
+            row=5, column=0, columnspan=4, sticky='ew'
+        )
 
         ############################
         # Row 6 - PAGE RANGE LABEL #
         ############################
         # Page range label
-        self.page_rng_lbl = ttk.Label(self, text='Page Range Selection (I.e. \
-1-2,5)')
+        self.page_rng_lbl = ttk.Label(
+            self, text='Page Range Selection (I.e. 1-2,5)'
+        )
         # Page range label placement
-        self.page_rng_lbl.grid(row=6, column=0, columnspan=4, sticky='snw',
-                               padx=2, pady=2)
+        self.page_rng_lbl.grid(
+            row=6, column=0, columnspan=4, sticky='snw', padx=2, pady=2
+        )
 
         ##############################
         # Row 7 - PAGE RANGE WIDGETS #
@@ -177,15 +147,19 @@ class SingleSplitTab(tk.Frame):
         # Row 8 - PROCESS BUTTONS #
         ###########################
         # Process button
-        self.process_btn = ttk.Button(self, text='Process',
-                                      command=lambda: self.splitFile())
+        self.process_btn = ttk.Button(
+            self, text='Process', command=lambda: self.splitFile()
+        )
         # Process button placement
         self.process_btn.grid(row=8, column=1, sticky='ew', padx=5, pady=5)
         # Quit button
-        self.quit_btn = ttk.Button(self, text='Quit',
-                                   command=lambda: self.quit())
+        self.quit_btn = ttk.Button(
+            self, text='Quit', command=lambda: self.quit()
+        )
         # Quit button placement
         self.quit_btn.grid(row=8, column=2, sticky='ew', padx=5, pady=5)
+
+        self.logger.debug("...__init__ complete")
 
     #############
     # Functions #
@@ -193,12 +167,10 @@ class SingleSplitTab(tk.Frame):
     # Get the PDF to be split
     def openFile(self):
         # Open file dialog to get user specified PDF file
-        self.inputFile = fd.askopenfilename(initialdir=self.defaultDir,
-                                            title="Select file",
-                                            filetypes=(("PDF files",
-                                                        "*.pdf"),
-                                                       ("all files",
-                                                        "*.*")))
+        self.inputFile = fd.askopenfilename(
+            initialdir=self.defaultDir, title="Select file",
+            filetypes=(("PDF files", "*.pdf"), ("all files", "*.*"))
+        )
         # Split the selected file into path and file to allow program to store
         # the directory the file was selected from as the default
         self.defaultDir, self.fileName = os.path.split(self.inputFile)
@@ -210,8 +182,9 @@ class SingleSplitTab(tk.Frame):
     # Get the directory into which the new file will go
     def getDir(self):
         # Open directory selection dialog
-        self.outputDir = fd.askdirectory(initialdir=self.defaultDir,
-                                         title="Select Save Directory")
+        self.outputDir = fd.askdirectory(
+            initialdir=self.defaultDir, title="Select Save Directory"
+        )
         # Delete any contents that may be in the entry widget
         self.out_dir_entry.delete(0, tk.END)
         # Insert the contents of the outputDir variable into the entry widget
@@ -224,7 +197,10 @@ class SingleSplitTab(tk.Frame):
         if os.path.isfile(self.inputFile):
             pass
         else:
-            puh.mbox(msg='The input file is invalid', win_title='ERROR')
+            mb.showwarning(
+                title="Input File Warning",
+                message="The input file is invalid"
+            )
             return
 
         # Check the entry widget contents for output directory
@@ -232,7 +208,10 @@ class SingleSplitTab(tk.Frame):
         if os.path.isdir(self.outputDir):
             pass
         else:
-            puh.mbox(msg='The output path does not exist', win_title='ERROR')
+            mb.showwarning(
+                title="Save Path Warning",
+                message="The output path does not exist"
+            )
             return
 
         # Check the entry widget contents for file name
@@ -241,8 +220,10 @@ class SingleSplitTab(tk.Frame):
                 None and self.outfile_name_entry.get() != '':
             pass
         else:
-            puh.mbox(msg='The file name specified is invalid',
-                     win_title='ERROR')
+            mb.showwarning(
+                title="Output Filename Warning",
+                msg="The file name specified is invalid"
+            )
             return
 
         # Check the entry widget contents for page range
@@ -254,8 +235,10 @@ class SingleSplitTab(tk.Frame):
         if self.pageChars.issuperset(self.page_rng_entry.get()):
             pass
         else:
-            puh.mbox(msg='The page range specified is invalid',
-                     win_title='ERROR')
+            mb.showwarning(
+                title="Page Range Warning",
+                msg="The page range specified is invalid"
+            )
             return
 
     def splitFile(self):
@@ -269,7 +252,10 @@ class SingleSplitTab(tk.Frame):
             split.addOutput(self.outputFile)
 
             split.pdfSplit()
-            puh.mbox(msg='Operation completed', win_title='Success')
+            mb.showinfo(
+                win_title='Success',
+                msg="Operation completed"
+            )
         else:
             return
 

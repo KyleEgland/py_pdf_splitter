@@ -1,6 +1,6 @@
-# py_pdf_splitter
+# Python PDF Manipulator
 
-Splitting an input PDF into an output PDF with Python 3.
+A GUI-based application for manipulating PDFs, written with Python 3.
 
 ## Synopsis
 
